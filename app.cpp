@@ -5,24 +5,24 @@
 
 #include "Eigen/Dense"
 
-using Eigen::MatrixXd;
+// using Eigen::MatrixXd;
 
-Eigen::MatrixXi readCSVToEigenMatrix(const std::string &filename){
+Eigen::MatrixXf readCSVToEigenMatrix(const std::string &filename){
     std::ifstream file(filename);
     if (!file.is_open()) {
         throw std::runtime_error("Error opening file");
     }
 
-    std::vector<std::vector<int>> data;
+    std::vector<std::vector<float>> data;
     std::string line;
 
     while (std::getline(file,line)){
         std::stringstream ss(line);
         std::string item;
-        std::vector<int> row;
+        std::vector<float> row;
 
         while(std::getline(ss,item,',')){
-            row.push_back(std::stoi(item));
+            row.push_back(std::stof(item));
         }
         data.push_back(row);
     }
@@ -31,7 +31,7 @@ Eigen::MatrixXi readCSVToEigenMatrix(const std::string &filename){
     int rows = data.size();
     int cols = data[0].size();
 
-    Eigen::MatrixXi mat(rows,cols);
+    Eigen::MatrixXf mat(rows,cols);
 
     for (int i=0; i < rows; ++i){
         for (int j = 0; j < cols; ++j){
@@ -65,7 +65,7 @@ int main(){
      
     // sum(), prod(), mean(), minCoeff(), maxCoeff(),trace()
     try{
-        Eigen::MatrixXi mat = readCSVToEigenMatrix("data.csv");
+        Eigen::MatrixXf mat = readCSVToEigenMatrix("data.csv");
         // Eigen::Matrix2d mat;
         // mat.setOnes();
         std::cout << mat << std::endl;
@@ -76,6 +76,14 @@ int main(){
         std::cout << "Result for maxCoeff() function: " << mat.maxCoeff() << std::endl;
         std::cout << "Result for trace() function: " << mat.trace() << std::endl;
         std::cout << "Result for mean() function: " << mat.mean() << std::endl;
+        float determinant = mat.determinant();
+        std::cout << "Result for determinant() function: " << determinant << std::endl;
+        if (determinant != 0.0){
+            std::cout << "Inverse matrix : \n" <<std::endl;
+            std::cout << mat.inverse() << std::endl;
+        }else{
+            std::cout << "Can't be inversed :(" << std::endl;
+        }
     } catch (const std::exception &e) {
         std::cerr << e.what() << std::endl;
         return 1;
